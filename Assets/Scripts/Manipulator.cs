@@ -22,7 +22,7 @@ public class Manipulator : MonoBehaviour
         {
             _hookedFish = fish;
 
-            _hookedFish.FollowTarget(_hookPoint);
+            _hookedFish.FollowHook(_hookPoint);
         }
     }
 
@@ -30,7 +30,7 @@ public class Manipulator : MonoBehaviour
     {
         if (_hookedFish == null) return;
 
-        FishSold?.Invoke(_hookedFish.GetPoint());
+        FishSold?.Invoke(_hookedFish.GetScore());
         _hookedFish.Die();
         _hookedFish = null;
     }
