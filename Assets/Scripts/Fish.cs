@@ -2,25 +2,24 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
-using static UnityEngine.GraphicsBuffer;
 
-public class Fish : MonoBehaviour
+public class Fish : Item
 {
-    [SerializeField] private int _score;
+    [SerializeField] private int _resource;
     [SerializeField] private float _speed;
-    public int GetScore() => _score;
+    public override int GetResource() => _resource;
 
     private bool IsReachedTarget => Vector3.Distance(transform.position, _currentTarget) <= 0.1;
 
     private Vector3 _currentTarget;
 
-    private FishSpawner _fishSpawner;
+    private ItemSpawner _itemSpawner;
 
     private bool CanMove = true;
 
     private void Start()
     {
-        _currentTarget = _fishSpawner.GetRandomPoint;
+        _currentTarget = Points.GetRandomPoint;
     }
 
     private void Update()
@@ -34,7 +33,7 @@ public class Fish : MonoBehaviour
 
         if (IsReachedTarget == true)
         {
-            _currentTarget = _fishSpawner.GetRandomPoint;
+            _currentTarget = Points.GetRandomPoint;
         }
         else
         {
@@ -45,7 +44,7 @@ public class Fish : MonoBehaviour
         }
     }
 
-    public void FollowHook(Transform target)
+    public override void FollowHook(Transform target)
     {
         if (target == null) return;
 
@@ -54,13 +53,14 @@ public class Fish : MonoBehaviour
         transform.SetParent(target.transform);
     }
 
-    public void SetFishSpawner(FishSpawner fishSpawner)
+    public override void RemoveItem()
     {
-        _fishSpawner = fishSpawner;
+        _itemSpawner.RemoveItem();
+        Destroy(gameObject);
     }
 
-    public void Die()
+    public override void SetItemSpawner(ItemSpawner itemSpawner)
     {
-        Destroy(gameObject);
+        _itemSpawner = itemSpawner;
     }
 }

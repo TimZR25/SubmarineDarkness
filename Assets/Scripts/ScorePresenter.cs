@@ -4,7 +4,7 @@ using System.Drawing;
 using TMPro;
 using UnityEngine;
 
-public class Wallet : MonoBehaviour
+public class ScorePresenter : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI _textMeshPro;
     [SerializeField] private Manipulator _manipulator;
@@ -12,19 +12,21 @@ public class Wallet : MonoBehaviour
     public int Score { get; private set; }
 
 
-    private void AddScore(int amount)
+    private void AddScore(Item item)
     {
-        Score += amount;
+        if (item.GetType() != typeof(Fish)) return;
+
+        Score += item.GetResource();
         _textMeshPro.text = "Score: " + Score;
     }
 
     private void OnEnable()
     {
-        _manipulator.FishSold += AddScore;
+        _manipulator.ItemRemoved += AddScore;
     }
 
     private void OnDisable()
     {
-        _manipulator.FishSold -= AddScore;
+        _manipulator.ItemRemoved -= AddScore;
     }
 }

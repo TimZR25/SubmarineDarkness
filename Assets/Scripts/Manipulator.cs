@@ -8,9 +8,9 @@ public class Manipulator : MonoBehaviour
     [SerializeField] private Transform _hookPoint;
     [SerializeField] private float _hookRange;
 
-    private Fish _hookedFish;
+    private Item _hookedItem;
 
-    public Action<int> FishSold;
+    public Action<Item> ItemRemoved;
 
     public void TryHook()
     {
@@ -18,21 +18,21 @@ public class Manipulator : MonoBehaviour
 
         if (hitCollider == null) return;
 
-        if (hitCollider.TryGetComponent(out Fish fish))
+        if (hitCollider.TryGetComponent(out Item item))
         {
-            _hookedFish = fish;
+            _hookedItem = item;
 
-            _hookedFish.FollowHook(_hookPoint);
+            _hookedItem.FollowHook(_hookPoint);
         }
     }
 
-    public void TrySellFish()
+    public void TryRemoveItem()
     {
-        if (_hookedFish == null) return;
+        if (_hookedItem == null) return;
 
-        FishSold?.Invoke(_hookedFish.GetScore());
-        _hookedFish.Die();
-        _hookedFish = null;
+        ItemRemoved?.Invoke(_hookedItem);
+        _hookedItem.RemoveItem();
+        _hookedItem = null;
     }
 
     public void Show()
