@@ -1,10 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Net.NetworkInformation;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    [SerializeField] private OxygenHandler _oxygenHandler;
+
     [SerializeField] private Manipulator _manipulator;
 
     [SerializeField] private float _speed;
@@ -40,6 +43,21 @@ public class Player : MonoBehaviour
         if (moveInputX == 0) return;
 
         transform.localScale = new Vector3(moveInputX, 1, 1);
+    }
+
+    private void Die()
+    {
+        gameObject.SetActive(false);
+    }
+
+    private void OnEnable()
+    {
+        _oxygenHandler.OnDead += Die;
+    }
+
+    private void OnDisable()
+    {
+        _oxygenHandler.OnDead -= Die;
     }
 }
 
