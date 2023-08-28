@@ -1,12 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
-public class Oxygen : Item
+public class SeaMine : Item
 {
     [SerializeField] private int _resource;
     [SerializeField] private Animator _animator;
+    [SerializeField] private GameObject _explosionParticles;
 
     private ItemSpawner _itemSpawner;
 
@@ -31,6 +31,10 @@ public class Oxygen : Item
     public override void RemoveItem()
     {
         _itemSpawner.RemoveItem(this);
+
+        GameObject particle = Instantiate(_explosionParticles, transform.position, Quaternion.identity);
+        Destroy(particle, 3f);
+
         Destroy(gameObject);
     }
 }

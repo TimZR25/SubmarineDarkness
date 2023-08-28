@@ -1,23 +1,26 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.Net.NetworkInformation;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    [SerializeField] private ItemSpawner _seaMineSpawner;
+
     [SerializeField] private OxygenHandler _oxygenHandler;
 
     [SerializeField] private Manipulator _manipulator;
 
+    [SerializeField] private AudioSource _audioSonar;
+
     [SerializeField] private float _speed;
 
-    private Rigidbody2D _rigidbody;
+    [SerializeField] private float _radiusSonar;
 
+    private Rigidbody2D _rigidbody;
 
     private void Start()
     {
         _rigidbody = GetComponent<Rigidbody2D>();
+
+        InvokeRepeating(nameof(SearchMines), 0f, 0.01f);
     }
 
     private void Update()
@@ -58,6 +61,35 @@ public class Player : MonoBehaviour
     private void OnDisable()
     {
         _oxygenHandler.OnDead -= Die;
+    }
+
+    private void SearchMines()
+    {
+        foreach (Item seaMine in _seaMineSpawner.Items)
+        {
+            float distanceToMine = Vector3.Distance(transform.position, seaMine.transform.position);
+
+            if (distanceToMine <= _radiusSonar)
+            {
+                _audioSonar.pitch = 1.5f;
+
+                if (distanceToMine <= 1f)
+                {
+                    _oxygenHandler.Expode(seaMine);
+                    seaMine.RemoveItem();
+                }
+
+                break;
+            }
+
+            _audioSonar.pitch = 1f;
+        }
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireSphere(transform.position, _radiusSonar);
     }
 }
 

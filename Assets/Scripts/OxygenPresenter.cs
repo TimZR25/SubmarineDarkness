@@ -25,7 +25,7 @@ public class OxygenHandler : MonoBehaviour
         _audioSource = GetComponent<AudioSource>();
 
         CurrentOxygen = _maxOxygen;
-        StartCoroutine(RemoveOxygen());
+        StartCoroutine(DepleteOxygen());
     }
 
     private void AddOxygen(Item item)
@@ -33,6 +33,7 @@ public class OxygenHandler : MonoBehaviour
         if (item.GetType() != typeof(Oxygen)) return;
 
         _audioSource.Play();
+
         if (item.GetResource() + CurrentOxygen >= _maxOxygen)
         {
             CurrentOxygen = _maxOxygen;
@@ -43,15 +44,18 @@ public class OxygenHandler : MonoBehaviour
         }
     }
 
-    private IEnumerator RemoveOxygen()
+    public void Expode(Item item)
     {
-        while (CurrentOxygen > 0)
-        {
-            CurrentOxygen -= Time.deltaTime;
-            var normalizedValue = Mathf.Clamp(CurrentOxygen / _maxOxygen, 0.0f, 1.0f);
-            timerImage.fillAmount = normalizedValue;
-            yield return null;
-        }
+        if (item.GetType() != typeof(SeaMine)) return;
+
+        RemoveOxygen(item.GetResource());
+    }
+
+    private void RemoveOxygen(float amount)
+    {
+        CurrentOxygen -= amount;
+        var normalizedValue = Mathf.Clamp(CurrentOxygen / _maxOxygen, 0.0f, 1.0f);
+        timerImage.fillAmount = normalizedValue;
 
         if (CurrentOxygen <= 0)
         {
@@ -60,13 +64,24 @@ public class OxygenHandler : MonoBehaviour
         }
     }
 
+    private IEnumerator DepleteOxygen()
+    {
+        while (CurrentOxygen > 0)
+        {
+            RemoveOxygen(Time.deltaTime);
+            yield return null;
+        }
+    }
+
     private void OnEnable()
     {
         _manipulator.ItemRemoved += AddOxygen;
+        _manipulator.ItemRemoved += Expode;
     }
 
     private void OnDisable()
     {
         _manipulator.ItemRemoved -= AddOxygen;
+        _manipulator.ItemRemoved -= Expode;
     }
 }

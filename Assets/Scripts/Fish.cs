@@ -55,7 +55,7 @@ public class Fish : Item
 
     public override void RemoveItem()
     {
-        _itemSpawner.RemoveItem();
+        _itemSpawner.RemoveItem(this);
         Destroy(gameObject);
     }
 

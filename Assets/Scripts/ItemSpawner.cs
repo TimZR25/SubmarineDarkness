@@ -12,8 +12,7 @@ public class ItemSpawner : MonoBehaviour
     [SerializeField] private int _maxItems;
     [SerializeField] private float _delayBetweenSpawn;
 
-    public int ItemCount { get; private set; }
-
+    public List<Item> Items;
 
     private void Start()
     {
@@ -23,15 +22,15 @@ public class ItemSpawner : MonoBehaviour
 
     private void Spawn()
     {
-        if (ItemCount >= _maxItems) return;
+        if (Items.Count >= _maxItems) return;
 
         Item item = Instantiate(_itemPrefab, Points.GetRandomPoint, Quaternion.identity, transform);
+        Items.Add(item);
         item.SetItemSpawner(this);
-        ItemCount++;
     }
 
-    public void RemoveItem()
+    public void RemoveItem(Item item)
     {
-        ItemCount--;
+        Items.Remove(item);
     }
 }
